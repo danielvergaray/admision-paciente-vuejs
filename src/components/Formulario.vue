@@ -95,6 +95,7 @@ const paciente= reactive ({
       value="Registrar Paciente"
       />
     </form>
+    
   </div>
 </template>
 
