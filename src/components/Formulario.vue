@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import Alerta from "./Alerta.vue";
 
 const alerta = reactive({
@@ -7,40 +7,65 @@ const alerta = reactive({
   mensaje: "",
 });
 
-const emit= defineEmits(['update:nombre','update:propietario', 'update:email', 'update:alta', 'update:sintomas', 'guardar-paciente'])
+const emit = defineEmits([
+  "update:nombre",
+  "update:propietario",
+  "update:email",
+  "update:alta",
+  "update:sintomas",
+  "guardar-paciente",
+]);
 
-const props = defineProps ({
+const props = defineProps({
+  id: {
+    type: [String, null],
+    required: true,
+  },
   nombre: {
     type: String,
-    required: true
+    required: true,
   },
   propietario: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
-    required: true
+    required: true,
   },
   alta: {
     type: String,
-    required: true
+    required: true,
   },
   sintomas: {
     type: String,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
 const validar = () => {
   if (Object.values(props).includes("")) {
-    /* convierte el objeto paciente en un array y con en metodo INCLUDES se verifica si esta vacio */
+    /* convierte el objeto paciente en un array y con en metodo INCLUDES se verifica si esta vacio, se usa .values porque se esta en el script */
     alerta.mensaje = "Todos los campos son obligatorios";
     alerta.tipo = "error";
     return;
   }
-  emit('guardar-paciente') /* Se ejecuta la funcion guardar-paciente */
+  emit("guardar-paciente"); /* Se ejecuta la funcion guardar-paciente */
+  alerta.mensaje = "Paciente Almacenado Correctamente";
+  alerta.tipo = "exito";
+
+  setTimeout(() => {
+    Object.assign(alerta, {
+      tipo: "",
+      mensaje: "",
+    });
+  }, 3000);
 };
+
+const editando = computed (()=>{
+  return props.id
+})
+
 </script>
 
 <template>
@@ -68,8 +93,7 @@ const validar = () => {
           placeholder="Nombre de la mascota"
           class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
           :value="nombre"
-          @input = "$emit ('update:nombre', $event.target.value)"
-          
+          @input="$emit('update:nombre', $event.target.value)"
         />
       </div>
       <div class="mb-5">
@@ -85,8 +109,7 @@ const validar = () => {
           placeholder="Nombre del Propietario"
           class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
           :value="propietario"
-          @input = "$emit ('update:propietario', $event.target.value)"
-          
+          @input="$emit('update:propietario', $event.target.value)"
         />
       </div>
 
@@ -100,8 +123,7 @@ const validar = () => {
           placeholder="Email del Propietario"
           class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
           :value="email"
-          @input = "$emit ('update:email', $event.target.value)"
-          
+          @input="$emit('update:email', $event.target.value)"
         />
       </div>
 
@@ -114,8 +136,7 @@ const validar = () => {
           id="alta"
           class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
           :value="alta"
-          @input = "$emit ('update:alta', $event.target.value)"
-          
+          @input="$emit('update:alta', $event.target.value)"
         />
       </div>
 
@@ -128,14 +149,13 @@ const validar = () => {
           placeholder="Describe los sintomas del paciente"
           class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md h-40"
           :value="sintomas"
-          @input = "$emit ('update:sintomas', $event.target.value)"
-          
+          @input="$emit('update:sintomas', $event.target.value)"
         />
       </div>
       <input
         type="submit"
         class="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors"
-        value="Registrar Paciente"
+        :value="[editando ? 'Guardar Cambios' : 'Registrar Paciente']"
       />
     </form>
   </div>

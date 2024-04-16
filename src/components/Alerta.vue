@@ -8,8 +8,8 @@ const props = defineProps({
   },
 });
 
-const isError = computed (()=>{
-    return props.alerta.tipo === 'error'
+const isError = computed (()=>{ /* el compute es para que vue js haga todas las mejoras de performance que se permita */
+    return props.alerta.tipo === 'error' /* Si es error, devuelve true */
 })
 </script>
 
